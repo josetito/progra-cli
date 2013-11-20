@@ -98,7 +98,7 @@ mostrarAyuda: 	db	 	"Ayuda/mostrar.ayuda.txt",0
 msgError 	db "No se encontro la instruccion"
 lenError	equ	$-msgError
 ; MENSAJE QUE SE MUESTRA CUANDO NO SE ENCUENTRA UN ARCHIVO
-msgErrorNoArchivo 	db "No se encontro el archivo "
+msgErrorNoArchivo 	db "Ocurrio un error a la hora de abrir el archivo "
 lenErrorNoArchivo	equ	$-msgErrorNoArchivo
 
 ;UNA "C" SE USA PARA CUANDO SE COMPARA DOS LINEAS, SI SON DIFERENTES SERIA 1c1 ese "c" es este mensaje
@@ -109,6 +109,11 @@ clen		equ $-c
 ; SE USA PARA GUARDAR EL RESULTADO DE LA INSTRUCCION COMPARAR  Ejemplo 1c1
 resultado		dd 00
 lenresulado		equ	$-resultado
+
+;mensaje de logrado
+msgListo:	db " El proceso deseado se logro satisfactoriamente",10
+lenListo:	equ	$-msgListo
+
 
 section .text
         global _start
@@ -153,8 +158,6 @@ prompt: ; ciclo que imprime el ">>" para recibir argumentos
 .verificarArg3:					;guarda el 3er arguemtento en el buffer correspondiente bufferArg3
 	inc ecx						; incrementa el contador de la instruccion para asi caer en el 3er parametro
 	mov al,byte[bufferArg+ecx]	;guarda el la letra correspondiente del 3er argumento
-	mov byte[bufferArg3+edi],al	;guarda el 3er argumento en un buffer que solo va a contener ese argumento
-	mov byte[bufferArg3+edi+1],0; va guardando un 0 siempre adelante, esto para cuando llegue al final exista un null de mas por si es el nombre de un archivo, se necesita ese null
 	cmp al," "					; la compara con un espacio vacio
 	je .reiniciarCont			; si es asi reinicia un contador para verificar el 4to argumento que seria despues del " "(espacio vacio)
 	cmp byte[bufferArg+ecx],10	;compara si un enter	
@@ -269,7 +272,7 @@ verificarBorrar:
 	jmp leerArchivo
 
 .forzado:		; ve  si dice forzado, ya se sabe que existe un 3er argumento, entonces si no dice el va a error 
-	cmp esi,10		; compara el indice de letras con 10 
+	cmp esi,9		; compara el indice de letras con 10 
 	je  .borrarArchivo	; si llego a 10 significa que dice lo mismo
 	mov al,byte[msgForzado+esi]	; 
 	cmp byte[bufferArg3+esi],al; compara el 3er argumento con el msgForzado: "--forzado",10
@@ -295,7 +298,7 @@ verificarBorrar:
 		test eax, eax
 		js ErrorNoArchivo	;si no existe el archivo lanza un mensaje de Error
 		call CleanBssData	; limpia todos los buffers
-		jmp prompt			; vuelve al prompt
+		jmp Listo			; vuelve al prompt
 	
 verificarRenombrar:	; verifica si dice renombrar el primer argumento
 	mov al,byte[bufferArg1+ecx]	
@@ -337,7 +340,7 @@ verificarRenombrar:	; verifica si dice renombrar el primer argumento
 	cmp edi,9	; lo compara con 9 la cantidad de digitos,
 	je .cambiarNombre; si es asi, se llego al final con exito
 	inc edi			;aumenta el indice de letras
-	jmp .forzarRenombrar; vuelve al ciclo
+		jmp .forzarRenombrar; vuelve al ciclo
 
 
 .cambiarNombreConfirmacion:	; confirmar que se desea cambiar el nombre
@@ -353,7 +356,7 @@ verificarRenombrar:	; verifica si dice renombrar el primer argumento
 	mov ecx,bufferArg3	; nuevo nombre del archivo
 	call Rename			; llama a la funcion que renombra con esos 2 parametros de arriba
 	cmp eax,0			; compara el eax, 0 si no es 0 significa que hubo error al hacer el proceso de renombrado
-	je prompt			; si son iguales vuelve al prompt
+	je Listo			; si son iguales vuelve al prompt
 	jmp ErrorNoArchivo	; si no le avisa al usario que algo paso, que el archivo no existe
 	
 verificarCopiar:				; verificar si se escribio la instruccion copiar
@@ -409,7 +412,7 @@ verificarCopiar:				; verificar si se escribio la instruccion copiar
 	mov ecx,bufferArg3	; y el nombre del archivo nuevo, el copiado
 	call Copy			; llama a la subrutina que copia archivos
 	cmp eax,0			; si el eax da 0 ,todo ocurrio bien, si no entonces no existia el archivo	
-	je prompt			;si es 0  vuelve al prompt
+	je Listo			;si es 0  vuelve al prompt
 	jmp ErrorNoArchivo	; si  no da un mensaje al usuario de que no existe tal archivo
 	
 	
@@ -592,7 +595,14 @@ verificarComparar:	; verificar si dice comparar la instruccion(primer argumento)
 	
 	
 	
-	
+Listo:	; imprime que se logro bien el proceso deseado
+		mov ecx,msgListo
+		mov edx,lenListo
+		call DisplayText
+		mov ebx,lenArg
+		mov ecx,ebx
+		call CleanBssData
+		jmp prompt
 	
 
 ErrorNoArchivo:		; mensaje de error pero de que no exise el archivo dado

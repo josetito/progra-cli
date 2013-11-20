@@ -1,0 +1,13 @@
+Renombrar
+
+Modifica el nombre de un archivo.
+
+Sintaxis:
+
+clif y tito:>> renombrar [--ayuda] nombre-archivo-original nombre-archivo-nuevo [--forzado]
+
+Descripción:
+	Los argumentos del programa son los nombres de los archivos involucrados, el archivo que debe existir
+	en la ruta disponible al prompt será nombre-archivo-original y se le asignará por nombre el que se
+	haya ingresado como argumento nombre-archivo-nuevo.
+	la opcion --forzado es por si no se quiere verificar la accion.

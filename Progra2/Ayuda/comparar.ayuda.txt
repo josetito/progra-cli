@@ -1,0 +1,11 @@
+Comparar
+
+	Toma dos archivo y los compara línea por línea.
+
+Sintaxis:
+	clif y tito:>> comparar [--ayuda] nombre-archivo-1 nombre-archivo-2
+
+Descripción:
+	
+	Dados dos nombres de archivo existentes, los compara línea por línea mostrando como salida los
+	números de línea donde los archivos son diferentes y la linea diferente.

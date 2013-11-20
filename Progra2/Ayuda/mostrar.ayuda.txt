@@ -1,0 +1,10 @@
+Mostrar
+
+Muestra en la salida estándar el contenido de un archivo.
+
+Sintaxis:
+
+clif y tito:>> mostrar [--ayuda] nombre-archivo
+
+Descripción:
+	Este programa recibe como parámetro el nombre de un archivo ( nombre-archivo) y se muestra en la pantalla.

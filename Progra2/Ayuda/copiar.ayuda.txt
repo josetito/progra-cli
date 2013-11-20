@@ -1,0 +1,10 @@
+Copiar
+
+Copia el contenido de un archivo en otro nuevo.
+
+Sintaxis:
+clif y tito:>> copiar [--ayuda] nombre-archivo-original nombre-archivo-nuevo
+
+Descripción:
+
+	Los argumentos que recibe son el nombre del archivo(nombre-archivo-original) y el nombre del nuevo archivo(nombre-archivo-nuevo)
